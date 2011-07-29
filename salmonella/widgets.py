@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 
 
 class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
+    input_type = 'hidden'
     def render(self, name, value, attrs=None, multi=False):
         if attrs is None:
             attrs = {}
@@ -36,6 +37,9 @@ class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
     
     class Media:
         js = (settings.STATIC_URL + "salmonella.js",)
+        css = {
+            'all': (settings.STATIC_URL + "salmonella.css",)
+        }
 
 class SalmonellaMultiIdWidget(SalmonellaIdWidget):
     def value_from_datadict(self, data, files, name):

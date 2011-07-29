@@ -1,9 +1,29 @@
 (function($) {
     $(document).ready(function($) {
+        
+        // monkey patch django function
+        window.dismissRelatedLookupPopup = function(win, chosenId) {
+            var name = windowname_to_id(win.name);
+            //var elm = document.getElementById(name)
+            var id_selector = '#' + name
+            var jel = $(id_selector);
+            //console.log(jelm)
+            if (jel.hasClass('vManyToManyRawIdAdminField')) {
+                var newval = jel.val() + ',' + chosenId
+                jel.val(newval)
+            } else {
+                jel.val(chosenId);
+            }
+            jel.blur()
+            win.close();
+        }
+
+
         function update_salmonella_label(element, multi){
-            var name = element.next("a").attr("data-name"),
-                app = element.next("a").attr("data-app"),
-                model = element.next("a").attr("data-model"),
+            var row = element.closest('.salmonella-field')
+            var name = row.find("a").attr("data-name"),
+                app = row.find("a").attr("data-app"),
+                model = row.find("a").attr("data-model"),
                 value = element.val(),
                 MOUNT_URL = "/admin/salmonella",
                 admin_url_parts = window.location.pathname.split("/").slice(1, 4);
@@ -19,7 +39,7 @@
                 if ((name !== undefined) &&
                     (url !== undefined) &&
                     (value !== undefined) && (value !== "")) {
-                    // Handles elements added via the TabularInline add row functionality
+                    // Handles elements added via the TabularInline add row functionality                    
                     if (name.search(/__prefix__/) != -1){
                         name = element.attr("id").replace("id_", "");
                     }
@@ -28,7 +48,7 @@
                         url: url,
                         data: {"id": value},
                         success: function(data){
-                            $("#" + name + "_salmonella_label").html(" " + data);
+                            row.find('.salmonella_label').html(" " + data)
                         }
                     });
                 }
@@ -40,27 +60,25 @@
         // A big of a workaround to fire the change event on
         // blur because 'showRelatedObjectLookupPopup'
         // doesn't set the value in a way that trigger 'change'
-        $(".vForeignKeyRawIdAdminField, .vManyToManyRawIdAdminField").blur(function(e){
+        $(".salmonella-field input").live('blur',function(e){
             $(this).trigger('change');
             e.stopPropagation();
         });
-        $(".vForeignKeyRawIdAdminField").change(function(e){
-            $this = $(this);
-            update_salmonella_label($this, mutli=false);
+        $(".salmonella-field .vForeignKeyRawIdAdminField").live('change', function(e){
+            update_salmonella_label($(this), mutli=false);
             e.stopPropagation();
         });
         // Handle ManyToManyRawIdAdminFields.
-        $(".vManyToManyRawIdAdminField").change(function(e){
-            $this = $(this);
-            update_salmonella_label($this, multi=true);
+        $(".salmonella-field .vManyToManyRawIdAdminField").live('change', function(e){
+            update_salmonella_label($(this), multi=true);
             e.stopPropagation();
         });
         
         // clear both the input field and the labels
         $(".salmonella-clear-field").click(function(e){
-            $this = $(this);
-            $this.parent().find('input').val("")
-            $this.parent().find(".salmonella_label").empty()
+            var elm = $(this)
+            elm.parent().find('input').val("")
+            elm.parent().find(".salmonella_label").empty()
         });
         
         // Open up the pop up window and set the focus in the input field

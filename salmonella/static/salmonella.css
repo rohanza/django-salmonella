@@ -1,0 +1,13 @@
+.salmonella-field a {
+    float:left;
+    margin-right:8px;
+}
+.salmonella_label{
+    min-width:150px;
+    float:left;
+    font-size:14px;
+    margin-right:8px;
+}
+td.original p {
+    display:none
+}
