@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.admin import widgets
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
+from django.core.urlresolvers import reverse
 
 
 class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
@@ -9,14 +10,16 @@ class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
     def render(self, name, value, attrs=None, multi=False):
         if attrs is None:
             attrs = {}
-        related_url = '../../../%s/%s/' % (self.rel.to._meta.app_label, self.rel.to._meta.object_name.lower())
+        related_url = reverse('admin:%s_%s_changelist' %
+                               (self.rel.to._meta.app_label,
+                                self.rel.to._meta.object_name.lower()))
         params = self.url_parameters()
         if params:
             url = u'?' + u'&amp;'.join([u'%s=%s' % (k, v) for k, v in params.items()])
         else:
             url = u''
         if "class" not in attrs:
-            attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript looks for this hook.
+            attrs['class'] = 'vForeignKeyRawIdAdminField'  # The JavaScript looks for this hook.
         app_name = self.rel.to._meta.app_label.strip()
         model_name = self.rel.to._meta.object_name.lower().strip()
         hidden_input = super(widgets.ForeignKeyRawIdWidget, self).render(name, value, attrs)
@@ -32,12 +35,13 @@ class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
         }
         return render_to_string('salmonella/admin/widgets/salmonella_field.html',
                                 extra_context)
-    
+
     class Media:
         js = (settings.STATIC_URL + "salmonella.js",)
         css = {
             'all': (settings.STATIC_URL + "salmonella.css",)
         }
+
 
 class SalmonellaMultiIdWidget(SalmonellaIdWidget):
     def value_from_datadict(self, data, files, name):
@@ -53,4 +57,5 @@ class SalmonellaMultiIdWidget(SalmonellaIdWidget):
             value = ','.join([force_unicode(v) for v in value])
         else:
             value = ''
-        return super(SalmonellaMultiIdWidget, self).render(name, value, attrs, multi=True)
+        return super(SalmonellaMultiIdWidget, self).render(name, value,
+                                                           attrs, multi=True)

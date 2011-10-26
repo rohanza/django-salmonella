@@ -10,6 +10,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
+    package_data={'salmonella': ['static/*.js', 'templates/salmonella/*.html', 'templates/salmonella/admin/widgets/*.html']},
     url="http://github.com/lincolnloop/django-salmonella/",
     install_requires=['setuptools'],
     classifiers=[
