@@ -1,24 +1,6 @@
 (function($) {
     $(document).ready(function($) {
         
-        // monkey patch django function
-        window.dismissRelatedLookupPopup = function(win, chosenId) {
-            var name = windowname_to_id(win.name);
-            //var elm = document.getElementById(name)
-            var id_selector = '#' + name
-            var jel = $(id_selector);
-            //console.log(jelm)
-            if (jel.hasClass('vManyToManyRawIdAdminField')) {
-                var newval = jel.val() + ',' + chosenId
-                jel.val(newval)
-            } else {
-                jel.val(chosenId);
-            }
-            jel.blur()
-            win.close();
-        }
-
-
         function update_salmonella_label(element, multi){
             var row = element.closest('.salmonella-field')
             var name = row.find("a").attr("data-name"),
@@ -83,7 +65,19 @@
         
         // Open up the pop up window and set the focus in the input field
         $(".salmonella-related-lookup").click(function(e){
-            // Actual Django javascript function
+            // monkey patch django function
+            window.dismissRelatedLookupPopup = function(win, chosenId) {
+                var name = windowname_to_id(win.name);
+                var jel = $('#' + name);
+                if (jel.hasClass('vManyToManyRawIdAdminField')) {
+                    var newval = jel.val() + ',' + chosenId
+                    jel.val(newval)
+                } else {
+                    jel.val(chosenId);
+                }
+                jel.blur()
+                win.close();
+            }
             showRelatedObjectLookupPopup(this);
             // Set the focus into the input field
             $(this).parent().find('input').focus();
@@ -91,7 +85,7 @@
         });
 
         // Fire the event to update the solmonella fields on loads
-        django.jQuery(".vManyToManyRawIdAdminField").trigger('change');
-        django.jQuery(".vForeignKeyRawIdAdminField").trigger('change');
+        $(".salmonella-field .vManyToManyRawIdAdminField").trigger('change');
+        $(".salmonella-field .vForeignKeyRawIdAdminField").trigger('change');
     });
 })(django.jQuery);

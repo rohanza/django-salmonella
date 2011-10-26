@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="django-salmonella",
-    version="0.5.1.byteorbit",
+    version="0.5.2.byteorbit",
     author='Lincoln Loop',
     author_email='info@lincolnloop.com',
     description=("raw_id_fields widget replacement that handles display of an object's "

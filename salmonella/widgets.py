@@ -2,8 +2,6 @@ from django.conf import settings
 from django.contrib.admin import widgets
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
 
 
 class SalmonellaIdWidget(widgets.ForeignKeyRawIdWidget):
