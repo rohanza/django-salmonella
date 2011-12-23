@@ -65,14 +65,14 @@ $(function($) {
     });
 
     // clear both the input field and the labels
-    $(".salmonella-clear-field").click(function(e){
+    $(".salmonella-clear-field").live('click',function(e){
         var elm = $(this)
         elm.parent().find('input').val("")
         elm.parent().find(".salmonella_label").empty()
     });
 
     // Open up the pop up window and set the focus in the input field
-    $(".salmonella-related-lookup").click(function(e){
+    $(".salmonella-related-lookup").live('click',function(e){
         // monkey patch django function
         window.dismissRelatedLookupPopup = function(win, chosenId) {
             var name = windowname_to_id(win.name);
@@ -92,7 +92,7 @@ $(function($) {
         return false;
     });
 
-    // Fire the event to update the solmonella fields on loads
+    // Fire the event to update the solmonella fields on first page load
     $(".salmonella-field .vManyToManyRawIdAdminField").trigger('change');
     $(".salmonella-field .vForeignKeyRawIdAdminField").trigger('change');
 });
